@@ -1,0 +1,1 @@
+This is a in-progress program that gives the user the ability to load a CubeCobra csv file and collect subsequent pack 1 pick 1 (p1p1) inputs from the user until exited. I intend to collect a hefty sample size of data on my own personal cube from this program and subsequently build follow-up projects to leverage algorithms that help evaluate cubes.
