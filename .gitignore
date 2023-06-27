@@ -1,2 +1,4 @@
 /.venv
 /__pycache__
+cubes/prescientpeasant.csv
+databases/prescientpeasant.db
