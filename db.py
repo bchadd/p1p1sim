@@ -64,8 +64,8 @@ def to_list_from_(list_df: pd.DataFrame) -> list:
 
 def generate_pack_from_(cube_list: list) -> list:
     pack = []
-    for i in range(15):
-        pack.append(random.choices(cube_list,k=15))
+    for card in random.choices(cube_list,k=15):
+        pack.append(card)
     return pack
 
 def json_df_from_(json: json) -> pd.DataFrame:
@@ -95,11 +95,11 @@ def create_picks_object(picked_pack: list) -> Picks:
 
 def add_list_to_(engine: Engine, list_df: pd.DataFrame) -> None:
     with Session(engine) as session, session.begin():
-        list_df.to_sql(name=List,con=engine,if_exists='replace',index=False)
+        list_df.to_sql(name='list',con=engine,if_exists='replace',index=False)
 
 def add_info_to_(engine: Engine, json_df: pd.DataFrame) -> None:
     with Session(engine) as session, session.begin():
-        json_df.to_sql(name=Info,con=engine,if_exists='replace')
+        json_df.to_sql(name='info',con=engine,if_exists='replace')
 
 def add_pick_to_(engine: Engine, p1p1_obj: Picks) -> None:
     with Session(engine) as session, session.begin():
