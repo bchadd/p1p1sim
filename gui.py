@@ -7,9 +7,6 @@ import os
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.init_ui()
-
-    def init_ui(self):
         self.setWindowTitle('p1p1sim')
         self.setGeometry(100, 100, 400, 400)
         vbox = QVBoxLayout()
@@ -75,7 +72,7 @@ class PickWindow(QWidget):
 
         # Add exit button
         exit_button = QPushButton('Exit', self)
-        exit_button.clicked.connect(self.close)
+        exit_button.clicked.connect(self.close_pick_window)
         grid.addWidget(exit_button, 3, 2, 1, 1)  # Span the button across 5 columns
 
         self.setLayout(grid)
@@ -83,7 +80,6 @@ class PickWindow(QWidget):
     def button_clicked(self, card):
         if card == 'Exit':
             self.closed.emit()
-            self.close()
         else:
             # Pull picked card to the first index position, then add to db
             self.current_pack.insert(0, self.current_pack.pop(self.current_pack.index(card)))
@@ -94,3 +90,7 @@ class PickWindow(QWidget):
             new_pick_window.closed.connect(self.show)
             self.close()
             new_pick_window.show()
+
+    def close_pick_window(self):
+        self.closed.emit()
+        self.close()
