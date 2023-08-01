@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, MetaData, Engine
+from sqlalchemy import create_engine, MetaData, Engine, ForeignKey
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, relationship, mapped_column
 import pandas as pd
 import json
@@ -6,30 +6,31 @@ from datetime import datetime
 import random
 
 class Base(DeclarativeBase):
-    def __init__(self):
-        self.metadata = MetaData()
+    pass
 
 class List(Base):
     __tablename__ = 'list'
 
-    mtgo_id: Mapped[int] = mapped_column(primary_key=True)
+    list_id: Mapped[int] = mapped_column(primary_key=True,autoincrement=True)
     name: Mapped[str]
 
-    child: Mapped['Info'] = relationship(back_populates='parent')
+    child_info: Mapped['Info'] = relationship(back_populates='parent_list', cascade='all, delete')
 
 class Info(Base):
     __tablename__ = 'info'
 
+    list_id: Mapped[int] = mapped_column(ForeignKey('list.list_id'))
     mtgo_id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str]
+    name: Mapped[str] = mapped_column(ForeignKey('list.name'))
     png: Mapped[str]
 
-    parent: Mapped['List'] = relationship(back_populates='child')
+    parent_list: Mapped['List'] = relationship(foreign_keys=[list_id], back_populates='child_info')
 
 class Picks(Base):
     __tablename__ = 'picks'
 
     pick_id: Mapped[int] = mapped_column(primary_key=True,autoincrement=True)
+    timestamp: Mapped[str]
     pick: Mapped[str]
     card2: Mapped[str]
     card3: Mapped[str]
@@ -45,7 +46,6 @@ class Picks(Base):
     card13: Mapped[str]
     card14: Mapped[str]
     card15: Mapped[str]
-    timestamp: Mapped[str]
 
 ## set table schema
 
@@ -63,10 +63,7 @@ def to_list_from_(list_df: pd.DataFrame) -> list:
     return list_df['name'].tolist()
 
 def generate_pack_from_(cube_list: list) -> list:
-    pack = []
-    for card in random.choices(cube_list,k=15):
-        pack.append(card)
-    return pack
+    return random.sample(cube_list,k=15)
 
 def json_df_from_(json: json) -> pd.DataFrame:
     return pd.read_json(json)
@@ -74,7 +71,8 @@ def json_df_from_(json: json) -> pd.DataFrame:
 def create_picks_object(picked_pack: list) -> Picks:
     now = datetime.now()
     timestamp = now.strftime('%Y-%m-%d %H:%M:%S')
-    return Picks(pick=picked_pack[0],
+    return Picks(timestamp=timestamp,
+                 pick=picked_pack[0],
                  card2=picked_pack[1],
                  card3=picked_pack[2],
                  card4=picked_pack[3],
@@ -88,8 +86,7 @@ def create_picks_object(picked_pack: list) -> Picks:
                  card12=picked_pack[11],
                  card13=picked_pack[12],
                  card14=picked_pack[13],
-                 card15=picked_pack[14],
-                 timestamp=timestamp)
+                 card15=picked_pack[14])
 
 ## insert structures to tables
 
