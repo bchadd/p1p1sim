@@ -54,7 +54,7 @@ class PickWindow(QWidget):
 
         self.cube_list = db.to_list_from_(self.list_df)
 
-        if not os.path.exists('oracle-cards.json'):
+        if not os.path.exists('bulk-data.json'):
             oracle.write_oracle_json()
         else:
             oracle.update_oracle_json()
