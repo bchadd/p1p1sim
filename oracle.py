@@ -5,15 +5,15 @@ import pytz
 import simplejson as json
 import ijson
 
-def write_oracle_json() -> None:
+def write_bulk_json() -> None:
     bulk_res = requests.get('https://api.scryfall.com/bulk-data/oracle-cards')
     bulk_res.raise_for_status()
     res_json = bulk_res.json()
     with open('bulk-data.json','w') as file:
         json.dump(res_json, file)
 
-def update_oracle_json() -> None:
-    ## Overwrite local oracle json if response's 'updated_at'
+def update_bulk_json() -> None:
+    ## Overwrite local bulk json if response's 'updated_at'
     ## timestamp is more recent than local json's mod timestamp.
     ## Raises HTTPError if Scryfall API is not responding.
     bulk_res = requests.get('https://api.scryfall.com/bulk-data/oracle-cards')
@@ -29,7 +29,7 @@ def update_oracle_json() -> None:
         with open('bulk-data.json','w') as file:
             json.dump(new_json, file)
 
-def filter_json_for_(cube_list: list) -> json:
+def filter_json_for_(oracle_json: json, cube_list: list) -> json:
     ## recreate oracle card json for cube cards only
     filtered_cards = []
     with open('bulk-data.json','r') as f:

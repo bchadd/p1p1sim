@@ -12,40 +12,40 @@ class List(Base):
     __tablename__ = 'list'
 
     list_id: Mapped[int] = mapped_column(primary_key=True,autoincrement=True)
-    name: Mapped[str]
+    name: Mapped[str] = mapped_column(nullable=False)
 
-    child_info: Mapped['Info'] = relationship(back_populates='parent_list', cascade='all, delete')
+    card_info_entries: Mapped['Info'] = relationship(back_populates='underlying_list', cascade='all, delete-orphan')
 
 class Info(Base):
     __tablename__ = 'info'
 
     list_id: Mapped[int] = mapped_column(ForeignKey('list.list_id'))
     mtgo_id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(ForeignKey('list.name'))
-    png: Mapped[str]
+    name: Mapped[str] = mapped_column(nullable=False)
+    png: Mapped[str] = mapped_column(nullable=False)
 
-    parent_list: Mapped['List'] = relationship(foreign_keys=[list_id], back_populates='child_info')
+    underlying_list: Mapped['List'] = relationship(foreign_keys=[list_id], back_populates='card_info_entries')
 
 class Picks(Base):
     __tablename__ = 'picks'
 
     pick_id: Mapped[int] = mapped_column(primary_key=True,autoincrement=True)
-    timestamp: Mapped[str]
-    pick: Mapped[str]
-    card2: Mapped[str]
-    card3: Mapped[str]
-    card4: Mapped[str]
-    card5: Mapped[str]
-    card6: Mapped[str]
-    card7: Mapped[str]
-    card8: Mapped[str]
-    card9: Mapped[str]
-    card10: Mapped[str]
-    card11: Mapped[str]
-    card12: Mapped[str]
-    card13: Mapped[str]
-    card14: Mapped[str]
-    card15: Mapped[str]
+    timestamp: Mapped[str] = mapped_column(nullable=False)
+    pick: Mapped[str] = mapped_column(nullable=False)
+    card2: Mapped[str] = mapped_column(nullable=False)
+    card3: Mapped[str] = mapped_column(nullable=False)
+    card4: Mapped[str] = mapped_column(nullable=False)
+    card5: Mapped[str] = mapped_column(nullable=False)
+    card6: Mapped[str] = mapped_column(nullable=False)
+    card7: Mapped[str] = mapped_column(nullable=False)
+    card8: Mapped[str] = mapped_column(nullable=False)
+    card9: Mapped[str] = mapped_column(nullable=False)
+    card10: Mapped[str] = mapped_column(nullable=False)
+    card11: Mapped[str] = mapped_column(nullable=False)
+    card12: Mapped[str] = mapped_column(nullable=False)
+    card13: Mapped[str] = mapped_column(nullable=False)
+    card14: Mapped[str] = mapped_column(nullable=False)
+    card15: Mapped[str] = mapped_column(nullable=False)
 
 ## set table schema
 
