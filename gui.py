@@ -49,28 +49,35 @@ class PickWindow(QWidget):
 
         self.engine = db.create_engine(f'sqlite:///databases//{self.cube_name}.db')
         db.create_tables(self.engine)
+
         self.list_df = db.create_list_df_from_(self.cube_name)
         db.add_list_to_(self.engine, self.list_df)
 
         self.cube_list = db.to_list_from_(self.list_df)
 
+        ## update bulk json
         if not os.path.exists('bulk-data.json'):
-            oracle.write_oracle_json()
+            oracle.write_bulk_json()
         else:
-            oracle.update_oracle_json()
-        self.info_json = oracle.filter_json_for_(self.cube_list)
-        self.extracted_json = oracle.extract_info_from_(self.info_json)
-        self.info_df = db.json_df_from_(self.extracted_json)
-        db.add_info_to_(self.engine, self.info_df)
+            oracle.update_bulk_json()
 
-        # Add 15 buttons in a 3x5 grid
+        ## create cube card info json
+        oracle.extract_oracle_json()
+        filtered_json = oracle.filter_oracle_json_for_(self.cube_list)
+        extracted_json = oracle.extract_info_from_(filtered_json)
+
+        ## add cube card info to info table
+        json_df = db.json_df_from_(extracted_json)
+        db.add_info_to_(self.engine, json_df)
+
+        ## add 15 buttons in a 3x5 grid
         self.current_pack = db.generate_pack_from_(self.cube_list)
         for index, card in enumerate(self.current_pack):
             button = QPushButton(card)
             button.clicked.connect(lambda _, card=card: self.button_clicked(card))
             grid.addWidget(button, index // 5, index % 5)
 
-        # Add exit button
+        ## add exit button
         exit_button = QPushButton('Exit', self)
         exit_button.clicked.connect(self.close_pick_window)
         grid.addWidget(exit_button, 3, 2, 1, 1)  # Span the button across 5 columns

@@ -14,17 +14,17 @@ class List(Base):
     list_id: Mapped[int] = mapped_column(primary_key=True,autoincrement=True)
     name: Mapped[str] = mapped_column(nullable=False)
 
-    card_info_entries: Mapped['Info'] = relationship(back_populates='underlying_list', cascade='all, delete-orphan')
+    card_info_entries: Mapped['Info'] = relationship(back_populates='underlying_list',cascade='all, delete-orphan')
 
 class Info(Base):
     __tablename__ = 'info'
 
+    id: Mapped[str] = mapped_column(primary_key=True)
     list_id: Mapped[int] = mapped_column(ForeignKey('list.list_id'))
-    mtgo_id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(nullable=False)
     png: Mapped[str] = mapped_column(nullable=False)
 
-    underlying_list: Mapped['List'] = relationship(foreign_keys=[list_id], back_populates='card_info_entries')
+    underlying_list: Mapped['List'] = relationship(foreign_keys=[list_id],back_populates='card_info_entries')
 
 class Picks(Base):
     __tablename__ = 'picks'
